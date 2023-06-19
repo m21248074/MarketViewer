@@ -6,36 +6,130 @@
 		<title>MarketViewer</title>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+		<style>
+			.h-20
+			{
+				height: 20%!important;
+			}
+		</style>
 		<script type="text/javascript" src="/eel.js"></script>
 	</head>
 	<body>
 		<nav class="navbar bg-body-tertiary">
 			<div class="container-fluid">
 				<span class="navbar-brand mb-0 h1">MarketViewer</span>
-				<div class="d-flex">
-					<a class="text-dark fs-4" href="https://github.com/m21248074/MarketViewer"><i class="bi bi-github"></i></a>
+				<div class="d-flex align-items-center">
+					<a class="text-dark fs-4" href="https://github.com/m21248074/MarketViewer">
+						<i class="bi bi-github"></i>
+					</a>
 				</div>
 			</div>
 		</nav>
 		<div class="container-fluid mt-2">
-			<div class="input-group mb-3">
-				<label class="input-group-text">Symbol</label>
-				<select class="form-select">
-					<option selected>Choose...</option>
-					<option value="1">One</option>
-					<option value="2">Two</option>
-					<option value="3">Three</option>
-				</select>
+			<div class="row">
+				<div class="col-10">
+					<div class="input-group mb-3">
+						<label class="input-group-text">Symbol</label>
+						<input type="text" class="form-control" id="symbol" list="symbol_list"/>
+						<datalist id="symbol_list">
+							<option>GBPUSD=X</option>
+							<option>GC=F</option>
+						</datalist>
+						<div class="input-group-text">
+							<input class="form-check-input mt-0" id="time_range" type="checkbox">
+						</div>
+						
+						<label class="input-group-text range1">Start</label>
+						<input type="date" id="start" class="form-control range1" />
+						<label class="input-group-text range1">End</label>
+						<input type="date" id="end" class="form-control range1" />
+						
+						<label class="input-group-text range2 d-none">Period</label>
+						<input type="text" class="form-control range2 d-none" id="period" list="period_list"/>
+						<datalist id="period_list">
+							<option>1d</option>
+							<option>5d</option>
+							<option>1mo</option>
+							<option>3mo</option>
+							<option>6mo</option>
+							<option>1y</option>
+							<option>2y</option>
+							<option>5y</option>
+							<option>10y</option>
+							<option>ytd</option>
+							<option>max</option>
+						</datalist>
+						
+						<label class="input-group-text">Interval</label>
+						<input type="text" class="form-control" id="interval" list="interval_list"/>
+						<datalist id="interval_list">
+							<option>1m</option>
+							<option>2m</option>
+							<option>5m</option>
+							<option>15m</option>
+							<option>30m</option>
+							<option>60m</option>
+							<option>90m</option>
+							<option>1h</option>
+							<option>1d</option>
+							<option>5d</option>
+							<option>1wk</option>
+							<option>1mo</option>
+							<option>3mo</option>
+						</datalist>
+						<button class="btn btn-primary" id="getBtn">Get Data</button>
+						<button class="btn btn-secondary" id="getBtn">Get Statistical Data</button>
+					</div>
+					<div class="input-group mb-3">
+						<label class="input-group-text">Test Size</label>
+						<input type="number" class="form-control" id="test_size" min='0' max='1' value="0.3" step="0.1"/>
+						<label class="input-group-text">Target is Next</label>
+						<input type="number" class="form-control" id="target" min='1' value="1"/>
+						<label class="input-group-text">Candlestick's Status</label>
+						<button class="btn btn-primary" id="PCABtn">PCA</button>
+						<button class="btn btn-secondary" id="RFBtn">Random Forest</button>
+						<button class="btn btn-warning" id="HMBtn">Heap Map</button>
+						<label class="input-group-text">Model</label>
+						<select class="form-select" id="model">
+							<option>Choose...</option>
+							<optgroup label="Classification">
+								<option>Logistic Regression</option>
+								<option>Decision Tree</option>
+								<option>KNN</option>
+								<option>SVM</option>
+								<option>GradientBoostingClassifier</option>
+								<option>Naïve Bayes Classifier</option>
+							</optgroup>
+							<optgroup label="Regression">
+								<option>Linear Regression</option>
+								<option>RandomForestRegressor</option>
+							</optgroup>
+						</select>
+						<button class="btn btn-success" id="trainBtn">Train Model</button>
+					</div>
+					<div id="main" class="border p-2" style="width: 100%; height: 600px;"></div>
+					<div class="d-flex h-20">
+						<img class="img-fluid border" id="PCAImage" src="https://fakeimg.pl/640x480/?text=PCA&font=lobster"/>
+						<img class="img-fluid border" id="RFImage" src="https://fakeimg.pl/640x480/?text=Random Forest"/>
+						<img class="img-fluid border" id="HMImage" src="https://fakeimg.pl/640x480/?text=Heap Map&font=lobster"/>
+						<img class="img-fluid border" id="TrainRPImage" src="https://fakeimg.pl/640x480/?text=Train Residual Plot"/>
+						<img class="img-fluid border" id="TestRPImage" src="https://fakeimg.pl/640x480/?text=Test Residual Plot"/>
+					</div>
+				</div>
+				<div class="col-2">
+					<div class="list-group" id="history">
+						<span class="list-group-item list-group-item-action active">
+							Training History
+						</span>
+					</div>
+				</div>
 			</div>
 		</div>
-		<div id="main" style="width: 600px;height:400px;"></div>
-		
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
-		
-		
-		
+		<script src="./main.js"></script>
 	</body>
 </html>
