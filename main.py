@@ -183,8 +183,8 @@ def train(args):
 	
 	X=df.copy()
 	y=X['Next Close']=X['Close'].shift(-next)
-	X=X.drop(columns=['Close','Adj Close','Volume'])
 	X=X.dropna()
+	X=X.drop(columns=['Close','Adj Close','Volume','Next Close'])
 	y=y.dropna()
 	
 	size = X.shape[0]
